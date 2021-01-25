@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 2.8.9)
 project(tutorial_joint-interface)
 
 # mandatory use of these packages
-find_package(YARP 3.3.0 REQUIRED)
+find_package(YARP 3.4.0 COMPONENTS os sig dev conf telemetry REQUIRED)
 find_package(ICUBcontrib REQUIRED)
+find_package(matioCpp REQUIRED)
 
 # extend the current search path used by cmake to load helpers
 list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
@@ -23,7 +24,8 @@ add_subdirectory(gazebo)
 # position
 add_executable(${PROJECT_NAME}-position ${CMAKE_SOURCE_DIR}/src/position.cpp)
 target_compile_definitions(${PROJECT_NAME}-position PRIVATE _USE_MATH_DEFINES)
-target_link_libraries(${PROJECT_NAME}-position ${YARP_LIBRARIES})
+target_compile_features(${PROJECT_NAME}-position PRIVATE cxx_std_17)
+target_link_libraries(${PROJECT_NAME}-position ${YARP_LIBRARIES} matioCpp::matioCpp)
 install(TARGETS ${PROJECT_NAME}-position DESTINATION bin)
 
 # positiondirect

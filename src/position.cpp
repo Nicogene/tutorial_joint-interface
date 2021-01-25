@@ -12,6 +12,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Time.h>
+#include <yarp/telemetry/BufferManager.h>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -20,6 +21,8 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+yarp::telemetry::BufferManager<double> bm("tutorial_pos_ctrl.mat",
+                                          { {"pos",{1,1}} }, 100, true);
 
 class CtrlModule: public RFModule
 {
@@ -69,6 +72,8 @@ protected:
         double t0=Time::now();
         while (!done&&(Time::now()-t0<10.0))
         {
+            ienc->getEncoder(joint,&enc);
+            bm.push_back({enc}, "pos");
             yInfo()<<"Waiting...";
             Time::delay(0.1);   // release the quantum to avoid starving resources
             ipos->checkMotionDone(&done);
